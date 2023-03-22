@@ -1,5 +1,5 @@
 <div align="center">
-  <h3 align="center">SnowBot</h3>
+  <h3 align="center">🐈 SnowBot</h3>
 
   <p align="center">
     A discord bot that can compile and execute snowball code. 🚀
