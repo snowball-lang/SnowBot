@@ -11,6 +11,10 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 def bot():
+
+    if not os.path.exists("./code"):
+        os.mkdir("code")
+        
     DiscordWebSocket.identify = identify
     client = discord.Bot(activity=discord.Activity(type=discord.ActivityType.watching, name="all of your spagetti code"))
 

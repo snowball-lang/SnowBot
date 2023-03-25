@@ -12,7 +12,10 @@ def execute_command(command: str):
             detach=True,
             remove=True,
             cpu_shares=1024,
-            mem_limit='1g'
+            mem_limit='1g',
+            volumes={
+                os.getcwd(): {'bind': '/code', 'mode': 'rw'}
+            }
         )
 
         out = strip_ansi(container.logs().decode("utf-8"))
@@ -22,13 +25,16 @@ def execute_command(command: str):
         return ("", str(e))
 
 def get_file(code: str):
-    filename = f"./snowbot-{random.randint(100, 500)}-source.sn"
+    filename = f"./code/snowbot-{random.randint(100, 500)}-source.sn"
     with open(filename, "a") as f:
         f.write(code)
     return filename
 
 
 def execute_code(code: str):
-    command = "snowball run -f \"" + get_file(code) + "\""
+    f = get_file(code)
+    command = "snowball run -f \"" + f + "\""
+    os.remove(f)
+    
     return execute_command(command)
 
