@@ -1,40 +1,42 @@
 import os
 import random
+import subprocess
 import docker
 from strip_ansi import strip_ansi
 
-def execute_command(command: str):
+SNOWBALL = "/root/.snowball/bin/snowball"
+
+def execute_command(command: str, id: int):
     try:
         client = docker.from_env()
+
         container = client.containers.run(
-            image=os.getenv('DOCKER'),
+            image=os.environ.get("DOCKER"),
             command=command,
-            detach=True,
-            remove=True,
-            cpu_shares=1024,
-            mem_limit='1g',
-            volumes={
-                os.getcwd(): {'bind': '/code', 'mode': 'rw'}
-            }
+            volumes={f"{os.getcwd()}/code": {'bind': '/app/code', 'mode': 'rw'}},
         )
 
-        out = strip_ansi(container.logs().decode("utf-8"))
+        # Print the container output
+        logs = container.decode('utf-8')
 
-        return (out, "")
+        return (logs, 0)
     except Exception as e:
-        return ("", str(e))
+        return (str(e), 1)
 
-def get_file(code: str):
-    filename = f"./code/snowbot-{random.randint(100, 500)}-source.sn"
-    with open(filename, "a") as f:
+def get_file(code: str, id: int):
+    filename = f"./code/snowbot-{id}-source.sn"
+    with open(filename, "a+") as f:
         f.write(code)
     return filename
 
-
 def execute_code(code: str):
-    f = get_file(code)
-    command = "snowball run -f \"" + f + "\""
+    id = random.randint(100, 500)
+    f = get_file(code, id)
+    files = [f for f in os.listdir(".") if os.path.isfile(f)]
+
+    print(files)
+    command = ' '.join([SNOWBALL, "run", "-f", f])
     os.remove(f)
-    
-    return execute_command(command)
+
+    return execute_command(command, id)
 
