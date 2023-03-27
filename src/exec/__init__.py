@@ -22,6 +22,7 @@ def execute_command(command: str, id: int):
             command,
         )
 
+        print(logs)
         logs = strip_ansi(logs.decode("utf-8").replace("\\n", "\n").replace("\\t", "\t"))
         return (logs, exit_code)
     except Exception as e:
@@ -40,7 +41,7 @@ def execute_code(code: str):
     id = random.randint(100, 500)
     bot_file, main_file = get_file(code, id)
 
-    command = ' '.join([SNOWBALL, "run", "-s", "-f", bot_file])
+    command = ' '.join([SNOWBALL, "build", "-f", bot_file, "-s"])
 
     c = execute_command(command, id)
     os.remove(main_file)

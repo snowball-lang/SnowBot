@@ -1,9 +1,8 @@
 FROM ubuntu:latest
 
 RUN apt-get -y update
-RUN apt-get install sudo -y
-RUN apt-get install curl -y
-RUN apt-get install python3 python3-pip -y
+RUN apt-get install sudo libglib2.0-0 \
+    curl python3 python3-pip -y
 
 WORKDIR /app
 
