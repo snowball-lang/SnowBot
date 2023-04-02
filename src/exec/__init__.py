@@ -22,18 +22,18 @@ def execute_command(command: str, executable: str, id: int):
             command,
         )
 
-        clogs = strip_ansi(clogs.decode("utf-8").replace("\\n", "\n").replace("\\t", "\t"))
+        clogs = strip_ansi(clogs.decode("utf-8", errors='ignore').replace("\\n", "\n").replace("\\t", "\t"))
         if cexit_code != 0:
-            return cexit_code, clogs
+            return (cexit_code, clogs)
 
         exit_code, logs = container.exec_run(
             executable,
         )
 
-        logs = strip_ansi(logs.decode("utf-8").replace("\\n", "\n").replace("\\t", "\t"))
+        logs = strip_ansi(logs.decode("utf-8", errors='ignore').replace("\\n", "\n").replace("\\t", "\t"))
         return (exit_code, logs)
     except Exception as e:
-        return (str(e), 1)
+        return (1, str(e))
 
 def get_file(code: str, id: int):
     filename = f"code/snowbot-{id}-source.sn"
