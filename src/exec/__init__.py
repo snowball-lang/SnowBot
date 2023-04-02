@@ -8,23 +8,30 @@ SNOWBALL = "/root/.snowball/bin/snowball"
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/../.."
 BOT_ROOT = "/app"
 
-def execute_command(command: str, id: int):
+def execute_command(command: str, executable: str, id: int):
     try:
         client = docker.from_env()
 
-        container = box = client.containers.run(image = os.environ.get("DOCKER"),
+        container = client.containers.run(image = os.environ.get("DOCKER"),
                             detach = True,
                             tty = True,
                             volumes={f"{os.getcwd()}/code": {'bind': '/app/code', 'mode': 'rw'}},
-
-                            command = "/bin/bash")
-        exit_code, logs = container.exec_run(
+                            privileged=True,
+                            mem_limit="10g")
+        cexit_code, clogs = container.exec_run(
             command,
         )
 
-        print(logs)
+        clogs = strip_ansi(clogs.decode("utf-8").replace("\\n", "\n").replace("\\t", "\t"))
+        if cexit_code != 0:
+            return cexit_code, clogs
+
+        exit_code, logs = container.exec_run(
+            executable,
+        )
+
         logs = strip_ansi(logs.decode("utf-8").replace("\\n", "\n").replace("\\t", "\t"))
-        return (logs, exit_code)
+        return (exit_code, logs)
     except Exception as e:
         return (str(e), 1)
 
@@ -42,8 +49,9 @@ def execute_code(code: str):
     bot_file, main_file = get_file(code, id)
 
     command = ' '.join([SNOWBALL, "build", "-f", bot_file, "-s"])
+    executable = ' '.join(["./.sn/bin/out.o"])
 
-    c = execute_command(command, id)
+    c = execute_command(command, executable, id)
     os.remove(main_file)
 
     return c

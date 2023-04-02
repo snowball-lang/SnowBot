@@ -9,7 +9,7 @@ class CodeModal(discord.ui.Modal):
         self.add_item(discord.ui.InputText(label="Snowball code", style=discord.InputTextStyle.paragraph))
 
     async def callback(self, interaction: discord.Interaction):
-        output, p = execute_code(self.children[0].value)
+        p, output = execute_code(self.children[0].value)
         if p != 0:
             await interaction.response.send_message("", embed=self._create_error_embed(output, interaction))
         else:
