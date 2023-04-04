@@ -10,14 +10,19 @@ class CommandGroup(commands.Cog):
         self.bot = bot
 
     @commands.command(description="Compile snowball code")
-    async def compile(self, ctx, *, code: str):
-        code = self.strip_source_code(code)
+    async def compile(self, ctx, *, code = None):
+        async with ctx.typing():
+            if code is None:
+                await ctx.reply("", embed=self._create_how_to_pass_embed())
+                return
 
-        p, output = execute_code(code)
-        if p != 0:
-            await ctx.reply("", embed=self._create_error_embed(output, ctx))
-        else:
-            await ctx.reply("", embed=self._create_output_embed(output, ctx))
+            code = self.strip_source_code(code)
+
+            p, output = execute_code(code)
+            if p != 0:
+                await ctx.reply("", embed=self._create_error_embed(output, ctx))
+            else:
+                await ctx.reply("", embed=self._create_output_embed(output, ctx))
 
     def _create_error_embed(self, error: str, ctx: discord.Interaction):
         embed = discord.Embed(
@@ -31,6 +36,30 @@ class CommandGroup(commands.Cog):
         embed.add_field(name="Error message", value=f"```rs\n{error}```", inline=False)
         embed.set_footer(text="Fix your code and try again!")
 
+        return embed
+
+    def _create_how_to_pass_embed(self):
+        """
+        Creates a Discord embed guide for passing code.
+        Includes the 3 methods of passing source code.
+        """
+        embed = discord.Embed(title=f"How to pass snowball source code?", color=discord.Colour.from_rgb(255,255,255))
+
+        embed.add_field(
+            name="Method 1 (Plain)",
+            value=(f"<@1088132784431829072> compile \n" "code"),
+            inline=False,
+        )
+        embed.add_field(
+            name="Method 2 (Code block)",
+            value=(f"<@1088132784431829072> compile \n" "\`\`\`code\`\`\`"),
+            inline=False,
+        )
+        embed.add_field(
+            name="Method 3 (Syntax Highlighting)",
+            value=(f"<@1088132784431829072> compile \n" f"\`\`\`rs\n" "code\`\`\`"),
+            inline=False,
+        )
         return embed
 
     def _create_output_embed(self, output: str, ctx: discord.Interaction):
