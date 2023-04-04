@@ -16,11 +16,11 @@ def bot():
         os.mkdir("code")
         
     DiscordWebSocket.identify = identify
-    client = discord.Bot(activity=discord.Activity(type=discord.ActivityType.watching, name="all of your spagetti code"))
+    client = discord.ext.commands.Bot(activity=discord.Activity(type=discord.ActivityType.watching, name="all of your spagetti code"))
 
     @client.event
     async def on_ready():
         print("SnowBot ready to compile!")
 
-    client.add_cog(CommandGroup(client))
+    client.load_extension('src.commands.__init__')
     client.run(TOKEN)
