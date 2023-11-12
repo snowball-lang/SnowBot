@@ -50,7 +50,7 @@ def execute_code(code: str):
     bot_file, main_file = get_file(code, id)
 
     command = ' '.join([SNOWBALL, "build", "-f", bot_file, "-s"])
-    executable = ' '.join(["./.sn/bin/out.o"])
+    executable = ' '.join(["./.sn/bin/file"])
 
     c = execute_command(command, executable, id)
     os.remove(main_file)
