@@ -13,7 +13,7 @@ WORKDIR /app
 RUN apt-get install lsb-release wget software-properties-common gnupg -y
 RUN wget https://apt.llvm.org/llvm.sh
 RUN chmod +x llvm.sh
-RUN sudo ./llvm.sh 14
+RUN sudo ./llvm.sh 16
 RUN rm llvm.sh
 
 RUN sudo ln -s bash /bin/sh.bash

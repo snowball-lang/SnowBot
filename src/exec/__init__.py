@@ -23,6 +23,7 @@ def execute_command(command: str, executable: str, id: int):
         )
 
         clogs = strip_ansi(clogs.decode("utf-8", errors='ignore').replace("\\n", "\n").replace("\\t", "\t"))
+
         if cexit_code != 0:
             return (cexit_code, clogs)
 

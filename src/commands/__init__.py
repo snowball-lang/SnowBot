@@ -66,13 +66,13 @@ class CommandGroup(commands.Cog):
         embed = discord.Embed(colour=discord.Colour.dark_grey(), timestamp=datetime.datetime.now(datetime.timezone.utc))
         # embed.set_author(name=f"{str(ctx.author)}'s code execution", icon_url=ctx.author.avatar_url)
 
-        if len(output) > 300 or output.count("\n") > 10:
+        if len(output) > 1500 or output.count("\n") > 20:
             embed.description = f"Output too large - [Full output](TODO)"
 
             if output.count("\n") > 10:
                 output = "\n".join(output.split("\n")[:10]) + "\n(...)"
             else:
-                output = output[:300] + "\n(...)"
+                output = output[:1500] + "\n(...)"
 
         embed.add_field(name="Output", value=f"```yaml\n{output}```", inline=False)
         return embed
